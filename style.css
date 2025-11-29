@@ -1,0 +1,278 @@
+:root {
+    --bg-color: #ffffff;
+    --text-color: #1a1a1a;
+    --accent-color: #555;
+    --hover-color: #000;
+    --spacing-unit: 2rem;
+    --font-main: 'Inter', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-main);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    /* Hide default cursor */
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.3s ease;
+    /* Ensure elements don't show default cursor */
+}
+
+a:hover {
+    color: var(--hover-color);
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-unit);
+}
+
+/* Sidebar Navigation */
+.sidebar {
+    width: 250px;
+    position: fixed;
+    height: calc(100vh - 4rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.sidebar h1 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    letter-spacing: -0.02em;
+    display: none;
+    /* Hide old h1 if present, though replaced in HTML */
+}
+
+.sidebar-top {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Logo */
+.logo {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin-bottom: 0;
+    /* Removed large margin */
+    transition: transform 0.1s linear;
+    /* Smooth rotation */
+    position: relative;
+    z-index: 1;
+}
+
+.sidebar h3 {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 10;
+    /* Ensure name is above logo */
+    margin-top: -2.5rem;
+    /* Pull name up over the logo */
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    /* Optional: improves readability */
+}
+
+.photo-placeholder {
+    display: none;
+}
+
+.profile-photo {
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 12px;
+    /* Removed grayscale filter */
+    transition: transform 0.3s ease;
+}
+
+.profile-photo:hover {
+    transform: scale(1.02);
+}
+
+.sidebar ul {
+    list-style: none;
+    margin-bottom: 2rem;
+    /* Add some space at bottom */
+}
+
+.sidebar li {
+    margin-bottom: 0.8rem;
+}
+
+.sidebar a {
+    font-size: 0.95rem;
+    color: var(--accent-color);
+}
+
+.sidebar a.active,
+.sidebar a:hover {
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+/* Main Content */
+.content {
+    margin-left: 280px;
+    /* Reduced from 300px to shift left */
+    flex: 1;
+    padding-top: 0.5rem;
+    max-width: 800px;
+    /* Limit width to keep it tighter */
+}
+
+section {
+    margin-bottom: 8rem;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 0.8s ease forwards;
+}
+
+section h2 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--accent-color);
+    margin-bottom: 2rem;
+    font-weight: 400;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.5rem;
+}
+
+/* Lists (Writings) */
+.list {
+    list-style: none;
+}
+
+.list li {
+    display: flex;
+    margin-bottom: 1rem;
+    align-items: baseline;
+}
+
+.list .date {
+    width: 80px;
+    font-size: 0.85rem;
+    color: var(--accent-color);
+    font-feature-settings: "tnum";
+}
+
+/* Projects Grid */
+.project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.project-card {
+    padding: 1.5rem;
+    border: 1px solid #eee;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.project-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    border-color: #ddd;
+}
+
+.project-card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.project-card p {
+    font-size: 0.9rem;
+    color: var(--accent-color);
+}
+
+/* Experience */
+.experience-item {
+    margin-bottom: 2rem;
+}
+
+.experience-item h3 {
+    font-size: 1.1rem;
+    font-weight: 500;
+    display: inline-block;
+    margin-right: 0.5rem;
+}
+
+.experience-item .company {
+    color: var(--accent-color);
+}
+
+.experience-item .date {
+    display: block;
+    font-size: 0.85rem;
+    color: #999;
+    margin-bottom: 0.5rem;
+    margin-top: 0.2rem;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+button {
+    cursor: pointer;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        padding: 1.5rem;
+    }
+
+    .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+        margin-bottom: 3rem;
+    }
+
+    .content {
+        margin-left: 0;
+    }
+
+    .cursor-light {
+        display: none;
+    }
+
+    body,
+    a,
+    button,
+    .project-card {
+        cursor: auto;
+    }
+}
