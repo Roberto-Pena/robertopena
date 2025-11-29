@@ -51,4 +51,67 @@ document.addEventListener('DOMContentLoaded', () => {
         cursorLight.style.left = e.clientX + 'px';
         cursorLight.style.top = e.clientY + 'px';
     });
+    // Modal Functionality
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalClose = document.querySelector('.modal-close');
+    const modalImage = document.getElementById('modalImage');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalDescription = document.getElementById('modalDescription');
+
+    function openModal(title, description, imageSrc = null) {
+        modalTitle.textContent = title;
+        modalDescription.textContent = description;
+
+        if (imageSrc) {
+            modalImage.src = imageSrc;
+            modalImage.alt = title;
+            modalImage.style.display = 'block';
+        } else {
+            modalImage.style.display = 'none';
+        }
+
+        modalOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    }
+
+    function closeModal() {
+        modalOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    // Event Listeners for Projects
+    const projectCards = document.querySelectorAll('.project-card');
+    projectCards.forEach(card => {
+        card.addEventListener('click', () => {
+            const title = card.getAttribute('data-title');
+            const description = card.getAttribute('data-description');
+            openModal(title, description);
+        });
+    });
+
+    // Event Listeners for Film Images
+    const filmImages = document.querySelectorAll('.film-tapestry img');
+    filmImages.forEach(img => {
+        img.addEventListener('click', () => {
+            const title = img.getAttribute('data-title') || 'Film Photo';
+            const description = img.getAttribute('data-description') || '';
+            const imageSrc = img.src;
+            openModal(title, description, imageSrc);
+        });
+    });
+
+    // Close Modal Event Listeners
+    modalClose.addEventListener('click', closeModal);
+
+    modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) {
+            closeModal();
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
+            closeModal();
+        }
+    });
 });

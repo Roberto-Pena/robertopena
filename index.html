@@ -24,6 +24,7 @@
                 <li><a href="#writings">Selected Writings</a></li>
                 <li><a href="#projects">Projects</a></li>
                 <li><a href="#experience">Experience</a></li>
+                <li><a href="#film">Film</a></li>
                 <li><a href="#cv">CV</a></li>
             </ul>
         </nav>
@@ -52,15 +53,18 @@
             <section id="projects">
                 <h2>Projects</h2>
                 <div class="project-grid">
-                    <div class="project-card">
+                    <div class="project-card" data-title="Solomon"
+                        data-description="Solomon is a web application designed for... (Placeholder for detailed description)">
                         <h3>Solomon</h3>
                         <p>A brief description of the Solomon project.</p>
                     </div>
-                    <div class="project-card">
+                    <div class="project-card" data-title="Pale Fire"
+                        data-description="Pale Fire explores the concept of... (Placeholder for detailed description)">
                         <h3>Pale Fire</h3>
                         <p>A brief description of the Pale Fire project.</p>
                     </div>
-                    <div class="project-card">
+                    <div class="project-card" data-title="Fading Light"
+                        data-description="Fading Light is an interactive art piece... (Placeholder for detailed description)">
                         <h3>Fading Light</h3>
                         <p>A brief description of the Fading Light project.</p>
                     </div>
@@ -77,12 +81,56 @@
                 </div>
             </section>
 
+            <section id="film">
+                <h2>Film</h2>
+                <div class="film-tapestry">
+                    <img src="film/024053-01.jpg" alt="Film photo 1" data-title="Film Photo 1"
+                        data-description="Shot on Portra 400, 2023.">
+                    <img src="film/024053-10.jpg" alt="Film photo 2" data-title="Film Photo 2"
+                        data-description="Shot on Portra 400, 2023.">
+                    <img src="film/024053-11.jpg" alt="Film photo 3" data-title="Film Photo 3"
+                        data-description="Shot on Portra 400, 2023.">
+                    <img src="film/024053-22.jpg" alt="Film photo 4" data-title="Film Photo 4"
+                        data-description="Shot on Portra 400, 2023.">
+                    <img src="film/029433-07.jpg" alt="Film photo 5" data-title="Film Photo 5"
+                        data-description="Shot on Ilford HP5, 2023.">
+                    <img src="film/029433-24.jpg" alt="Film photo 6" data-title="Film Photo 6"
+                        data-description="Shot on Ilford HP5, 2023.">
+                    <img src="film/029433-25.jpg" alt="Film photo 7" data-title="Film Photo 7"
+                        data-description="Shot on Ilford HP5, 2023.">
+                    <img src="film/029433-26.jpg" alt="Film photo 8" data-title="Film Photo 8"
+                        data-description="Shot on Ilford HP5, 2023.">
+                    <img src="film/029433-29.jpg" alt="Film photo 9" data-title="Film Photo 9"
+                        data-description="Shot on Ilford HP5, 2023.">
+                    <img src="film/029433-30.jpg" alt="Film photo 10" data-title="Film Photo 10"
+                        data-description="Shot on Ilford HP5, 2023.">
+                    <img src="film/029433-31.jpg" alt="Film photo 11" data-title="Film Photo 11"
+                        data-description="Shot on Ilford HP5, 2023.">
+                </div>
+            </section>
+
             <section id="cv">
                 <h2>CV</h2>
-                <a href="#" class="download-link">Download PDF</a>
+                <div class="cv-container" style="height: 800px; margin-bottom: 1rem;">
+                    <iframe src="documents/CV-RTPR-2026.pdf#zoom=100&navpanes=0&toolbar=0" width="105%" height="100%"
+                        style="border: none;"></iframe>
+                </div>
+                <a href="documents/CV-RTPR-2026.pdf" class="download-link" download>Download CV</a>
             </section>
         </main>
     </div>
+    <!-- Modal Structure -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <div class="modal-body">
+                <img src="" alt="" class="modal-image" id="modalImage">
+                <h3 id="modalTitle"></h3>
+                <p id="modalDescription"></p>
+            </div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 
