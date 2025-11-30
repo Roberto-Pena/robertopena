@@ -158,17 +158,26 @@ a:hover {
 
 .sidebar li {
     margin-bottom: 0.8rem;
+    position: relative;
 }
 
 .sidebar a {
     font-size: 0.95rem;
     color: var(--accent-color);
+    position: relative;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    display: block;
+    /* Ensure full width for hover */
 }
 
 .sidebar a.active,
 .sidebar a:hover {
     color: var(--text-color);
     font-weight: 500;
+    background: linear-gradient(90deg, rgba(255, 140, 0, 0.1), transparent);
+    box-shadow: -2px 0 10px rgba(255, 140, 0, 0.1);
 }
 
 /* Language Toggle Switch */
@@ -264,6 +273,24 @@ section h2 {
     display: flex;
     margin-bottom: 1rem;
     align-items: baseline;
+}
+
+.writing-item {
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+}
+
+.writing-item:hover {
+    opacity: 0.7;
+}
+
+.writing-link {
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s ease;
+}
+
+.writing-item:hover .writing-link {
+    border-color: var(--text-color);
 }
 
 .list .date {
@@ -468,7 +495,14 @@ button {
         z-index: 100;
         background-color: var(--bg-color);
         padding-bottom: 0;
-        width: 100%;
+
+        /* Full width fix */
+        margin-left: -1.5rem;
+        margin-right: -1.5rem;
+        width: calc(100% + 3rem);
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+
         height: auto;
         margin-bottom: 2rem;
         border-bottom: 1px solid #eee;
@@ -603,6 +637,29 @@ button {
 
 .film-tapestry img.hidden {
     display: none;
+}
+
+/* PDF Viewer Styles */
+.cv-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    width: 100%;
+}
+
+#pdf-render {
+    border: 1px solid #eee;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 100%;
+    height: auto;
+}
+
+.pdf-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
 /* Modal Styles */

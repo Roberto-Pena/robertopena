@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
@@ -10,6 +10,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    </script>
 </head>
 
 <body>
@@ -63,13 +67,23 @@
             <section id="writings">
                 <h2 data-i18n="writings_title">Selected Writings</h2>
                 <ul class="list">
-                    <li>
+                    <li class="writing-item" data-i18n-title="writing_1" data-i18n-content="writing_1_content">
                         <span class="date">2023</span>
-                        <a href="#" data-i18n="writing_1">The Future of Interfaces</a>
+                        <span class="writing-link" data-i18n="writing_1">The Future of Interfaces</span>
                     </li>
-                    <li>
+                    <li class="writing-item" data-i18n-title="writing_2" data-i18n-content="writing_2_content">
                         <span class="date">2023</span>
-                        <a href="#" data-i18n="writing_2">Minimalism in Code</a>
+                        <span class="writing-link" data-i18n="writing_2">Minimalism in Code</span>
+                    </li>
+                    <li class="writing-item" data-i18n-title="writing_3" data-i18n-content="writing_3_content">
+                        <span class="date">2025</span>
+                        <span class="writing-link" data-i18n="writing_3">Algún Día Todos Habrán Estado Siempre en Contra
+                            de Esto</span>
+                    </li>
+                    <li class="writing-item" data-i18n-title="writing_4" data-i18n-content="writing_4_content">
+                        <span class="date">2024</span>
+                        <span class="writing-link" data-i18n="writing_4">¿Cómo debe el Poder Judicial abordar el uso de
+                            Inteligencia Artificial?</span>
                     </li>
                 </ul>
             </section>
@@ -128,27 +142,27 @@
                 <h2 data-i18n="film_title">Film</h2>
                 <div class="film-tapestry">
                     <img src="film/024053-01.jpg" alt="Film photo 1" data-title="Film Photo 1"
-                        data-description="Shot on Portra 400, 2023.">
+                        data-description="Shot on Portra 400, 2023." loading="lazy">
                     <img src="film/024053-10.jpg" alt="Film photo 2" data-title="Film Photo 2"
-                        data-description="Shot on Portra 400, 2023.">
+                        data-description="Shot on Portra 400, 2023." loading="lazy">
                     <img src="film/024053-11.jpg" alt="Film photo 3" data-title="Film Photo 3"
-                        data-description="Shot on Portra 400, 2023.">
+                        data-description="Shot on Portra 400, 2023." loading="lazy">
                     <img src="film/024053-22.jpg" alt="Film photo 4" data-title="Film Photo 4"
-                        data-description="Shot on Portra 400, 2023.">
+                        data-description="Shot on Portra 400, 2023." loading="lazy">
                     <img src="film/029433-07.jpg" alt="Film photo 5" data-title="Film Photo 5"
-                        data-description="Shot on Ilford HP5, 2023.">
+                        data-description="Shot on Ilford HP5, 2023." loading="lazy">
                     <img src="film/029433-24.jpg" alt="Film photo 6" data-title="Film Photo 6"
-                        data-description="Shot on Ilford HP5, 2023.">
+                        data-description="Shot on Ilford HP5, 2023." loading="lazy">
                     <img src="film/029433-25.jpg" alt="Film photo 7" data-title="Film Photo 7"
-                        data-description="Shot on Ilford HP5, 2023.">
+                        data-description="Shot on Ilford HP5, 2023." loading="lazy">
                     <img src="film/029433-26.jpg" alt="Film photo 8" data-title="Film Photo 8"
-                        data-description="Shot on Ilford HP5, 2023.">
+                        data-description="Shot on Ilford HP5, 2023." loading="lazy">
                     <img src="film/029433-29.jpg" alt="Film photo 9" data-title="Film Photo 9"
-                        data-description="Shot on Ilford HP5, 2023.">
+                        data-description="Shot on Ilford HP5, 2023." loading="lazy">
                     <img src="film/029433-30.jpg" alt="Film photo 10" data-title="Film Photo 10"
-                        data-description="Shot on Ilford HP5, 2023.">
+                        data-description="Shot on Ilford HP5, 2023." loading="lazy">
                     <img src="film/029433-31.jpg" alt="Film photo 11" data-title="Film Photo 11"
-                        data-description="Shot on Ilford HP5, 2023.">
+                        data-description="Shot on Ilford HP5, 2023." loading="lazy">
                 </div>
                 <div class="film-controls">
                     <button id="showMoreFilm" class="secondary-btn" data-i18n="film_show_more">Show More</button>
@@ -166,9 +180,15 @@
 
             <section id="cv">
                 <h2 data-i18n="cv_title">CV</h2>
-                <div class="cv-container" style="height: 800px; margin-bottom: 1rem;">
-                    <iframe src="documents/CV-RTPR-2026.pdf#zoom=100&navpanes=0&toolbar=0" width="105%" height="100%"
-                        style="border: none;"></iframe>
+                <div class="cv-container" id="cv-viewer-container">
+                    <canvas id="pdf-render"></canvas>
+                    <div class="pdf-controls">
+                        <button id="prev-page" class="secondary-btn">&larr; Prev</button>
+                        <span id="page-info">
+                            Page <span id="page-num"></span> of <span id="page-count"></span>
+                        </span>
+                        <button id="next-page" class="secondary-btn">Next &rarr;</button>
+                    </div>
                 </div>
                 <a href="documents/CV-RTPR-2026.pdf" class="download-link" download data-i18n="download_cv">Download
                     CV</a>
@@ -211,7 +231,7 @@
             <div class="modal-body">
                 <img src="" alt="" class="modal-image" id="modalImage">
                 <h3 id="modalTitle"></h3>
-                <p id="modalDescription"></p>
+                <div id="modalDescription"></div>
             </div>
         </div>
     </div>

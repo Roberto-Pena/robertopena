@@ -4,6 +4,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
     const navLinksContainer = document.querySelector('.nav-links');
 
+    // Language variable (needs to be accessible throughout the script)
+    let currentLang = 'es'; // Default language
+
     // Mobile Menu Toggle
     if (mobileMenuToggle) {
         mobileMenuToggle.addEventListener('click', () => {
@@ -80,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function openModal(title, description, imageSrc = null) {
         modalTitle.textContent = title;
-        modalDescription.textContent = description;
+        modalDescription.innerHTML = description; // Changed to innerHTML for formatted text
 
         if (imageSrc) {
             modalImage.src = imageSrc;
@@ -108,6 +111,56 @@ document.addEventListener('DOMContentLoaded', () => {
             openModal(title, description);
         });
     });
+
+    // Event Listeners for Writings
+    const writingItems = document.querySelectorAll('.writing-item');
+    writingItems.forEach(item => {
+        item.addEventListener('click', () => {
+            // Get keys
+            const titleKey = item.getAttribute('data-i18n-title');
+            const contentKey = item.getAttribute('data-i18n-content');
+
+            // Get content based on current language
+            const title = translations[currentLang][titleKey] || 'Writing';
+            const content = translations[currentLang][contentKey] || '';
+
+            // Update hash without scrolling
+            history.pushState(null, null, `#${titleKey}`);
+
+            openModal(title, content);
+        });
+    });
+
+    // Check for hash on page load to open modal
+    function checkHashAndOpenModal() {
+        const hash = window.location.hash.substring(1); // Remove '#'
+        if (hash && hash.startsWith('writing_')) {
+            const item = document.querySelector(`.writing-item[data-i18n-title="${hash}"]`);
+            if (item) {
+                const titleKey = item.getAttribute('data-i18n-title');
+                const contentKey = item.getAttribute('data-i18n-content');
+                const title = translations[currentLang][titleKey] || 'Writing';
+                const content = translations[currentLang][contentKey] || '';
+                openModal(title, content);
+            }
+        }
+    }
+
+    // Clear hash when modal closes
+    const originalCloseModal = closeModal;
+    closeModal = function () {
+        originalCloseModal();
+        if (window.location.hash.startsWith('#writing_')) {
+            history.pushState(null, null, window.location.pathname);
+        }
+    };
+
+    // Check hash on page load
+    window.addEventListener('DOMContentLoaded', checkHashAndOpenModal);
+    // Also check immediately in case DOMContentLoaded already fired
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        checkHashAndOpenModal();
+    }
 
     // Event Listeners for Film Images
     const filmImages = document.querySelectorAll('.film-tapestry img');
@@ -159,7 +212,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Language Switcher Logic
     const langToggleBtn = document.getElementById('lang-toggle');
     const langLabels = document.querySelectorAll('.lang-label');
-    let currentLang = 'en'; // Default language
 
     function setLanguage(lang) {
         currentLang = lang;
@@ -232,7 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Initialize with default language
-    setLanguage('en');
+    setLanguage('es');
 
     // Contact Form Submission Handler
     const contactForm = document.getElementById('contactForm');
@@ -309,5 +361,145 @@ document.addEventListener('DOMContentLoaded', () => {
                 formStatus.textContent = '';
             }, 5000);
         }
+    }
+
+    // PDF Viewer Logic
+    const url = 'documents/CV-RTPR-2026.pdf';
+    let pdfDoc = null,
+        pageNum = 1,
+        pageRendering = false,
+        pageNumPending = null,
+        scale = 2.0, // Increased base scale for better resolution
+        canvas = document.getElementById('pdf-render'),
+        ctx = canvas ? canvas.getContext('2d') : null;
+
+    if (canvas) {
+        /**
+         * Get page info from document, resize canvas accordingly, and render page.
+         * @param num Page number.
+         */
+        function renderPage(num) {
+            pageRendering = true;
+            // Fetch page
+            pdfDoc.getPage(num).then(function (page) {
+                const containerWidth = document.getElementById('cv-viewer-container').clientWidth;
+
+                // Calculate scale to fit width
+                // We use a higher base scale but limit it by container width
+                const viewport = page.getViewport({ scale: 1.0 });
+
+                // Determine the scale needed to fit the container width
+                // We subtract some padding to be safe
+                const fitScale = (containerWidth - 32) / viewport.width;
+
+                // Use the larger of fitScale or our base scale, but ensure it fits
+                // Actually, we want to render at a high resolution (pixel density)
+                // but display at the fitScale size.
+
+                const outputScale = window.devicePixelRatio || 1;
+
+                // The display scale should fit the container
+                const displayScale = fitScale;
+
+                const scaledViewport = page.getViewport({ scale: displayScale });
+
+                // Set dimensions for high DPI
+                canvas.width = Math.floor(scaledViewport.width * outputScale);
+                canvas.height = Math.floor(scaledViewport.height * outputScale);
+
+                // Set CSS dimensions to match the display size
+                canvas.style.width = Math.floor(scaledViewport.width) + "px";
+                canvas.style.height = Math.floor(scaledViewport.height) + "px";
+
+                // Transform the context to handle the scaling
+                const transform = outputScale !== 1
+                    ? [outputScale, 0, 0, outputScale, 0, 0]
+                    : null;
+
+                // Render PDF page into canvas context
+                const renderContext = {
+                    canvasContext: ctx,
+                    transform: transform,
+                    viewport: scaledViewport
+                };
+                const renderTask = page.render(renderContext);
+
+                // Wait for render to finish
+                renderTask.promise.then(function () {
+                    pageRendering = false;
+                    if (pageNumPending !== null) {
+                        // New page rendering is pending
+                        renderPage(pageNumPending);
+                        pageNumPending = null;
+                    }
+                });
+            });
+
+            // Update page counters
+            document.getElementById('page-num').textContent = num;
+        }
+
+        /**
+         * If another page rendering in progress, waits until the rendering is
+         * finised. Otherwise, executes rendering immediately.
+         */
+        function queueRenderPage(num) {
+            if (pageRendering) {
+                pageNumPending = num;
+            } else {
+                renderPage(num);
+            }
+        }
+
+        /**
+         * Displays previous page.
+         */
+        function onPrevPage() {
+            if (pageNum <= 1) {
+                return;
+            }
+            pageNum--;
+            queueRenderPage(pageNum);
+        }
+        document.getElementById('prev-page').addEventListener('click', onPrevPage);
+
+        /**
+         * Displays next page.
+         */
+        function onNextPage() {
+            if (pageNum >= pdfDoc.numPages) {
+                return;
+            }
+            pageNum++;
+            queueRenderPage(pageNum);
+        }
+        document.getElementById('next-page').addEventListener('click', onNextPage);
+
+        /**
+         * Asynchronously downloads PDF.
+         */
+        pdfjsLib.getDocument(url).promise.then(function (pdfDoc_) {
+            pdfDoc = pdfDoc_;
+            document.getElementById('page-count').textContent = pdfDoc.numPages;
+
+            // Initial/first page rendering
+            renderPage(pageNum);
+        }).catch(function (error) {
+            console.error('Error loading PDF:', error);
+            // Fallback or error message could go here
+            document.getElementById('cv-viewer-container').innerHTML =
+                '<p>Unable to load PDF viewer. <a href="' + url + '">Download CV</a> instead.</p>';
+        });
+
+        // Handle window resize to re-render responsively
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                if (pdfDoc) {
+                    renderPage(pageNum);
+                }
+            }, 100); // Debounce resize
+        });
     }
 });
