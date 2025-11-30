@@ -47,8 +47,10 @@ a:hover {
 
 /* Sidebar Navigation */
 .sidebar {
-    width: 250px;
+    width: 180px;
     position: fixed;
+    left: 100px;
+    /* Push sidebar to the left */
     height: calc(100vh - 4rem);
     display: flex;
     flex-direction: column;
@@ -76,11 +78,10 @@ a:hover {
     height: 120px;
     object-fit: contain;
     margin-bottom: 0;
-    /* Removed large margin */
     transition: transform 0.1s linear;
-    /* Smooth rotation */
     position: relative;
     z-index: 1;
+    mix-blend-mode: multiply;
 }
 
 .sidebar h3 {
@@ -89,11 +90,8 @@ a:hover {
     margin-bottom: 0.5rem;
     position: relative;
     z-index: 10;
-    /* Ensure name is above logo */
-    margin-top: -2.5rem;
-    /* Pull name up over the logo */
+    margin-top: -2rem;
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-    /* Optional: improves readability */
 }
 
 .photo-placeholder {
@@ -101,16 +99,55 @@ a:hover {
 }
 
 .profile-photo {
-    width: 180px;
-    height: 180px;
+    width: 150px;
+    height: 150px;
     object-fit: cover;
     border-radius: 12px;
-    /* Removed grayscale filter */
     transition: transform 0.3s ease;
 }
 
 .profile-photo:hover {
     transform: scale(1.02);
+}
+
+/* Mobile Profile Photo */
+.mobile-profile-container {
+    display: none;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.mobile-profile-photo {
+    width: 160px;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 2px solid #eee;
+}
+
+/* Mobile Menu Toggle */
+.mobile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.mobile-menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    z-index: 101;
+}
+
+.mobile-menu-toggle span {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background-color: var(--text-color);
+    margin: 5px 0;
+    transition: 0.4s;
 }
 
 .sidebar ul {
@@ -134,10 +171,66 @@ a:hover {
     font-weight: 500;
 }
 
+/* Language Toggle Switch */
+.lang-toggle-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.lang-label {
+    font-size: 0.85rem;
+    color: var(--accent-color);
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.lang-label.active {
+    color: var(--text-color);
+}
+
+.lang-toggle {
+    position: relative;
+    width: 50px;
+    height: 26px;
+    background: linear-gradient(135deg, #ff8c00 0%, #ff6600 100%);
+    border: none;
+    border-radius: 13px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(255, 140, 0, 0.3);
+    flex-shrink: 0;
+}
+
+.lang-toggle:hover {
+    box-shadow: 0 4px 12px rgba(255, 140, 0, 0.5);
+    transform: translateY(-1px);
+}
+
+.lang-toggle:active {
+    transform: translateY(0);
+}
+
+.toggle-slider {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.lang-toggle.es .toggle-slider {
+    transform: translateX(24px);
+}
+
 /* Main Content */
 .content {
-    margin-left: 280px;
-    /* Reduced from 300px to shift left */
+    margin-left: 250px;
+    /* Keep content in original position */
     flex: 1;
     padding-top: 0.5rem;
     max-width: 800px;
@@ -235,6 +328,121 @@ section h2 {
     margin-top: 0.2rem;
 }
 
+/* Education */
+.education-item {
+    margin-bottom: 2rem;
+}
+
+.education-item h3 {
+    font-size: 1.1rem;
+    font-weight: 500;
+    display: inline-block;
+    margin-right: 0.5rem;
+}
+
+.education-item .institution {
+    color: var(--accent-color);
+}
+
+.education-item .date {
+    display: block;
+    font-size: 0.85rem;
+    color: #999;
+    margin-bottom: 0.5rem;
+    margin-top: 0.2rem;
+}
+
+/* Contact Form */
+.contact-intro {
+    margin-bottom: 2rem;
+    color: var(--accent-color);
+}
+
+.contact-form {
+    max-width: 600px;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    font-family: var(--font-main);
+    font-size: 0.95rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--hover-color);
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.submit-btn {
+    background: linear-gradient(135deg, #ff8c00 0%, #ff6600 100%);
+    color: white;
+    border: none;
+    padding: 0.85rem 2rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(255, 140, 0, 0.3);
+}
+
+.submit-btn:hover {
+    box-shadow: 0 4px 12px rgba(255, 140, 0, 0.5);
+    transform: translateY(-2px);
+}
+
+.submit-btn:active {
+    transform: translateY(0);
+}
+
+.form-status {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    border-radius: 4px;
+    display: none;
+    font-size: 0.9rem;
+}
+
+.form-status.success {
+    display: block;
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.form-status.error {
+    display: block;
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+
 /* Animations */
 @keyframes fadeIn {
     to {
@@ -259,11 +467,71 @@ button {
         top: 0;
         z-index: 100;
         background-color: var(--bg-color);
-        padding-bottom: 1rem;
+        padding-bottom: 0;
         width: 100%;
         height: auto;
-        margin-bottom: 3rem;
+        margin-bottom: 2rem;
         border-bottom: 1px solid #eee;
+    }
+
+    .sidebar-top {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 1rem;
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .mobile-header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+
+    .logo {
+        width: 60px;
+        height: 60px;
+    }
+
+    .sidebar h3 {
+        margin-top: 0;
+        margin-left: 1rem;
+        display: none;
+        /* Hide name in header on mobile if desired, or keep it */
+    }
+
+    .profile-photo {
+        display: none;
+    }
+
+    .mobile-menu-toggle {
+        display: block;
+    }
+
+    /* Hamburger Animation */
+    .mobile-menu-toggle.active span:nth-child(1) {
+        transform: rotate(-45deg) translate(-5px, 6px);
+    }
+
+    .mobile-menu-toggle.active span:nth-child(2) {
+        opacity: 0;
+    }
+
+    .mobile-menu-toggle.active span:nth-child(3) {
+        transform: rotate(45deg) translate(-5px, -6px);
+    }
+
+    .nav-links {
+        display: none;
+        width: 100%;
+        padding-top: 1rem;
+        border-top: 1px solid #eee;
+    }
+
+    .nav-links.active {
+        display: block;
     }
 
     .content {
@@ -304,6 +572,37 @@ button {
     .film-tapestry {
         column-count: 1;
     }
+
+    .mobile-profile-container {
+        display: block;
+    }
+}
+
+/* Film Controls */
+.film-controls {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.secondary-btn {
+    background: transparent;
+    border: 1px solid var(--accent-color);
+    color: var(--accent-color);
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.secondary-btn:hover {
+    border-color: var(--text-color);
+    color: var(--text-color);
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.film-tapestry img.hidden {
+    display: none;
 }
 
 /* Modal Styles */
