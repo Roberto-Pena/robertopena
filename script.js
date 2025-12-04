@@ -1,11 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('=== SCRIPT.JS DOM CONTENT LOADED - STARTING ===');
     const sections = document.querySelectorAll('section');
     const navLinks = document.querySelectorAll('.sidebar a');
     const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
     const navLinksContainer = document.querySelector('.nav-links');
-
-    // Language variable (needs to be accessible throughout the script)
-    let currentLang = 'es'; // Default language
 
     // Mobile Menu Toggle
     if (mobileMenuToggle) {
@@ -124,48 +122,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const title = translations[currentLang][titleKey] || 'Writing';
             const content = translations[currentLang][contentKey] || '';
 
-            // Update hash without scrolling
-            history.pushState(null, null, `#${titleKey}`);
-
             openModal(title, content);
         });
     });
 
-    // Check for hash on page load to open modal
-    function checkHashAndOpenModal() {
-        const hash = window.location.hash.substring(1); // Remove '#'
-        if (hash && hash.startsWith('writing_')) {
-            const item = document.querySelector(`.writing-item[data-i18n-title="${hash}"]`);
-            if (item) {
-                const titleKey = item.getAttribute('data-i18n-title');
-                const contentKey = item.getAttribute('data-i18n-content');
-                const title = translations[currentLang][titleKey] || 'Writing';
-                const content = translations[currentLang][contentKey] || '';
-                openModal(title, content);
-            }
-        }
-    }
-
-    // Clear hash when modal closes
-    const originalCloseModal = closeModal;
-    closeModal = function () {
-        originalCloseModal();
-        if (window.location.hash.startsWith('#writing_')) {
-            history.pushState(null, null, window.location.pathname);
-        }
-    };
-
-    // Check hash on page load
-    window.addEventListener('DOMContentLoaded', checkHashAndOpenModal);
-    // Also check immediately in case DOMContentLoaded already fired
-    if (document.readyState === 'complete' || document.readyState === 'interactive') {
-        checkHashAndOpenModal();
-    }
-
     // Event Listeners for Film Images
     const filmImages = document.querySelectorAll('.film-tapestry img');
     const showMoreBtn = document.getElementById('showMoreFilm');
-    const INITIAL_FILM_COUNT = 6;
+    const INITIAL_FILM_COUNT = 7;
 
     // Initially hide images > INITIAL_FILM_COUNT
     filmImages.forEach((img, index) => {
@@ -212,6 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Language Switcher Logic
     const langToggleBtn = document.getElementById('lang-toggle');
     const langLabels = document.querySelectorAll('.lang-label');
+    let currentLang = 'es'; // Default language
 
     function setLanguage(lang) {
         currentLang = lang;
@@ -373,43 +338,67 @@ document.addEventListener('DOMContentLoaded', () => {
         canvas = document.getElementById('pdf-render'),
         ctx = canvas ? canvas.getContext('2d') : null;
 
-    if (canvas) {
+    console.log('PDF Viewer initialization:');
+    console.log('- pdfjsLib available:', typeof pdfjsLib !== 'undefined');
+    console.log('- Canvas element:', canvas);
+    console.log('- Canvas context:', ctx);
+
+    if (!canvas) {
+        console.error('Canvas element not found!');
+    }
+
+    if (typeof pdfjsLib === 'undefined') {
+        console.error('pdfjsLib is not defined! PDF.js library may not have loaded.');
+        const cvContainer = document.getElementById('cv-viewer-container');
+        if (cvContainer) {
+            cvContainer.innerHTML = '<p style="color: red;">PDF library failed to load. <a href="' + url + '">Download CV</a> instead.</p>';
+        }
+    } else if (canvas && ctx) {
         /**
          * Get page info from document, resize canvas accordingly, and render page.
          * @param num Page number.
          */
         function renderPage(num) {
+            console.log('renderPage called with pageNum:', num);
             pageRendering = true;
             // Fetch page
             pdfDoc.getPage(num).then(function (page) {
+                console.log('Page fetched successfully:', page);
                 const containerWidth = document.getElementById('cv-viewer-container').clientWidth;
+                console.log('Container width:', containerWidth);
 
                 // Calculate scale to fit width
                 // We use a higher base scale but limit it by container width
                 const viewport = page.getViewport({ scale: 1.0 });
+                console.log('Base viewport:', viewport);
 
                 // Determine the scale needed to fit the container width
                 // We subtract some padding to be safe
                 const fitScale = (containerWidth - 32) / viewport.width;
+                console.log('Fit scale:', fitScale);
 
                 // Use the larger of fitScale or our base scale, but ensure it fits
                 // Actually, we want to render at a high resolution (pixel density)
                 // but display at the fitScale size.
 
                 const outputScale = window.devicePixelRatio || 1;
+                console.log('Output scale (devicePixelRatio):', outputScale);
 
                 // The display scale should fit the container
                 const displayScale = fitScale;
 
                 const scaledViewport = page.getViewport({ scale: displayScale });
+                console.log('Scaled viewport:', scaledViewport);
 
                 // Set dimensions for high DPI
                 canvas.width = Math.floor(scaledViewport.width * outputScale);
                 canvas.height = Math.floor(scaledViewport.height * outputScale);
+                console.log('Canvas dimensions set to:', canvas.width, 'x', canvas.height);
 
                 // Set CSS dimensions to match the display size
                 canvas.style.width = Math.floor(scaledViewport.width) + "px";
                 canvas.style.height = Math.floor(scaledViewport.height) + "px";
+                console.log('Canvas CSS dimensions:', canvas.style.width, canvas.style.height);
 
                 // Transform the context to handle the scaling
                 const transform = outputScale !== 1
@@ -422,21 +411,32 @@ document.addEventListener('DOMContentLoaded', () => {
                     transform: transform,
                     viewport: scaledViewport
                 };
+                console.log('Starting render with context:', renderContext);
                 const renderTask = page.render(renderContext);
 
                 // Wait for render to finish
                 renderTask.promise.then(function () {
+                    console.log('Page rendered successfully!');
                     pageRendering = false;
                     if (pageNumPending !== null) {
                         // New page rendering is pending
                         renderPage(pageNumPending);
                         pageNumPending = null;
                     }
+                }).catch(function (error) {
+                    console.error('Error rendering page:', error);
+                    pageRendering = false;
                 });
+            }).catch(function (error) {
+                console.error('Error fetching page:', error);
+                pageRendering = false;
             });
 
             // Update page counters
-            document.getElementById('page-num').textContent = num;
+            const pageNumEl = document.getElementById('page-num');
+            if (pageNumEl) {
+                pageNumEl.textContent = num;
+            }
         }
 
         /**
@@ -461,7 +461,11 @@ document.addEventListener('DOMContentLoaded', () => {
             pageNum--;
             queueRenderPage(pageNum);
         }
-        document.getElementById('prev-page').addEventListener('click', onPrevPage);
+
+        const prevButton = document.getElementById('prev-page');
+        if (prevButton) {
+            prevButton.addEventListener('click', onPrevPage);
+        }
 
         /**
          * Displays next page.
@@ -473,22 +477,41 @@ document.addEventListener('DOMContentLoaded', () => {
             pageNum++;
             queueRenderPage(pageNum);
         }
-        document.getElementById('next-page').addEventListener('click', onNextPage);
+
+        const nextButton = document.getElementById('next-page');
+        if (nextButton) {
+            nextButton.addEventListener('click', onNextPage);
+        }
 
         /**
          * Asynchronously downloads PDF.
          */
+        console.log('Starting PDF load, URL:', url);
+        console.log('Canvas element:', canvas);
+        console.log('Canvas context:', ctx);
+
         pdfjsLib.getDocument(url).promise.then(function (pdfDoc_) {
-            pdfDoc = pdfDoc_;
-            document.getElementById('page-count').textContent = pdfDoc.numPages;
+            console.log('PDF document loaded successfully!', pdfDoc_);
+            pdfDoc = pdfDoc_; const pageCountEl = document.getElementById('page-count');
+            console.log('Number of pages:', pdfDoc.numPages);
+            console.log('Page count element:', pageCountEl);
+
+            if (pageCountEl) {
+                pageCountEl.textContent = pdfDoc.numPages;
+            }
 
             // Initial/first page rendering
+            console.log('About to render page', pageNum);
             renderPage(pageNum);
         }).catch(function (error) {
             console.error('Error loading PDF:', error);
+            console.error('Error details:', error.message, error.stack);
             // Fallback or error message could go here
-            document.getElementById('cv-viewer-container').innerHTML =
-                '<p>Unable to load PDF viewer. <a href="' + url + '">Download CV</a> instead.</p>';
+            const cvContainer = document.getElementById('cv-viewer-container');
+            if (cvContainer) {
+                cvContainer.innerHTML =
+                    '<p>Unable to load PDF viewer. <a href="' + url + '">Download CV</a> instead.</p>';
+            }
         });
 
         // Handle window resize to re-render responsively
