@@ -26,6 +26,10 @@ body {
     /* Hide default cursor */
 }
 
+p {
+    text-align: justify;
+}
+
 a {
     text-decoration: none;
     color: inherit;
@@ -50,11 +54,10 @@ a:hover {
     width: 180px;
     position: fixed;
     left: 100px;
-    /* Push sidebar to the left */
+    top: 2rem;
     height: calc(100vh - 4rem);
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
 }
 
 .sidebar h1 {
@@ -70,6 +73,44 @@ a:hover {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    flex-shrink: 0;
+}
+
+/* Scrollable nav links - positioned at bottom above button */
+.sidebar .nav-links {
+    list-style: none;
+    overflow-y: auto;
+    max-height: calc(50vh - 50px);
+    margin-top: auto;
+    margin-bottom: 1rem;
+    padding-right: 0.5rem;
+    scrollbar-width: thin;
+    scrollbar-color: #ddd transparent;
+}
+
+.sidebar .nav-links::-webkit-scrollbar {
+    width: 4px;
+}
+
+.sidebar .nav-links::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar .nav-links::-webkit-scrollbar-thumb {
+    background-color: #ddd;
+    border-radius: 4px;
+}
+
+.sidebar .nav-links::-webkit-scrollbar-thumb:hover {
+    background-color: #bbb;
+}
+
+/* Fixed bottom section for language toggle */
+.sidebar-bottom {
+    flex-shrink: 0;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+    margin-top: auto;
 }
 
 /* Logo */
@@ -150,12 +191,6 @@ a:hover {
     transition: 0.4s;
 }
 
-.sidebar ul {
-    list-style: none;
-    margin-bottom: 2rem;
-    /* Add some space at bottom */
-}
-
 .sidebar li {
     margin-bottom: 0.8rem;
     position: relative;
@@ -200,7 +235,7 @@ a:hover {
     position: relative;
     width: 50px;
     height: 26px;
-    background: linear-gradient(135deg, #ff8c00 0%, #ff6600 100%);
+    background: linear-gradient(135deg, #017c9c 0%, #015a73 100%);
     border: none;
     border-radius: 13px;
     cursor: pointer;
@@ -291,6 +326,19 @@ section h2 {
     border-color: var(--text-color);
 }
 
+.writing-link-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.writing-subtitle {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--accent-color);
+    font-style: italic;
+    margin-top: 0.15rem;
+}
+
 .list .date {
     width: 80px;
     font-size: 0.85rem;
@@ -329,28 +377,105 @@ section h2 {
     color: var(--accent-color);
 }
 
+/* Project Status Indicator */
+.project-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.status-light {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.status-light.finished {
+    background-color: #22c55e;
+    box-shadow: 0 0 6px rgba(34, 197, 94, 0.6);
+}
+
+.status-text {
+    font-size: 0.75rem;
+    color: #22c55e;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
 /* Experience */
 .experience-item {
     margin-bottom: 2rem;
 }
 
-.experience-item h3 {
+/* Experience - Grouped by Employer */
+.experience-group {
+    margin-bottom: 2rem;
+}
+
+.employer-header {
+    margin-bottom: 1rem;
+}
+
+.employer-header h3 {
     font-size: 1.1rem;
-    font-weight: 500;
-    display: inline-block;
-    margin-right: 0.5rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.2rem;
 }
 
-.experience-item .company {
-    color: var(--accent-color);
-}
-
-.experience-item .date {
-    display: block;
-    font-size: 0.85rem;
+.employer-period {
+    font-size: 0.8rem;
     color: #999;
-    margin-bottom: 0.5rem;
-    margin-top: 0.2rem;
+}
+
+.roles-container {
+    padding-left: 1.25rem;
+    border-left: 2px solid #eee;
+}
+
+.role-item {
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.role-item:last-child {
+    margin-bottom: 0;
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.role-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.4rem;
+}
+
+.role-title {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.role-date {
+    font-size: 0.75rem;
+    color: #999;
+    background-color: #f5f5f5;
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+}
+
+.role-desc {
+    font-size: 0.85rem;
+    color: #666;
+    line-height: 1.5;
+    margin: 0;
 }
 
 /* Education */
@@ -375,6 +500,50 @@ section h2 {
     color: #999;
     margin-bottom: 0.5rem;
     margin-top: 0.2rem;
+}
+
+/* Fellowships & Awards */
+.award-item {
+    margin-bottom: 1.75rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.award-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.award-item h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: var(--text-color);
+}
+
+.award-item .organization {
+    color: var(--accent-color);
+    display: block;
+    font-size: 0.85rem;
+    margin-bottom: 0.2rem;
+}
+
+.award-item .date {
+    display: inline-block;
+    font-size: 0.75rem;
+    color: #999;
+    background-color: #f5f5f5;
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    margin-bottom: 0.5rem;
+}
+
+.award-item p {
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: 0.4rem;
+    line-height: 1.5;
 }
 
 /* Contact Form */
@@ -425,7 +594,7 @@ section h2 {
 }
 
 .submit-btn {
-    background: linear-gradient(135deg, #ff8c00 0%, #ff6600 100%);
+    background: linear-gradient(135deg, #017c9c 0%, #015a73 100%);
     color: white;
     border: none;
     padding: 0.85rem 2rem;
@@ -560,9 +729,22 @@ button {
         width: 100%;
         padding-top: 1rem;
         border-top: 1px solid #eee;
+        max-height: none;
+        overflow-y: visible;
     }
 
     .nav-links.active {
+        display: block;
+    }
+
+    .sidebar-bottom {
+        display: none;
+        border-top: none;
+        padding-top: 0.5rem;
+        margin-top: 0;
+    }
+
+    .nav-links.active+.sidebar-bottom {
         display: block;
     }
 
@@ -583,17 +765,25 @@ button {
 }
 
 /* Film Tapestry */
+/* Film Tapestry - Flexbox Masonry */
 .film-tapestry {
-    column-count: 3;
-    column-gap: 1rem;
+    display: flex;
+    gap: 1rem;
+}
+
+.film-col {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    flex: 1;
 }
 
 .film-tapestry img {
     width: 100%;
-    margin-bottom: 1rem;
-    break-inside: avoid;
     border-radius: 4px;
     transition: transform 0.3s ease;
+    display: block;
+    /* Removes bottom space */
 }
 
 .film-tapestry img:hover {
@@ -602,7 +792,11 @@ button {
 
 @media (max-width: 768px) {
     .film-tapestry {
-        column-count: 1;
+        flex-direction: column;
+    }
+
+    .film-col {
+        width: 100%;
     }
 
     .mobile-profile-container {
@@ -615,6 +809,37 @@ button {
     display: flex;
     justify-content: center;
     margin-top: 2rem;
+}
+
+/* Music Section Lazy Loading */
+.music-embed-container {
+    width: 100%;
+    min-height: 352px;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.music-embed-container iframe {
+    border-radius: 12px;
+    width: 100%;
+    height: 352px;
+    border: none;
+}
+
+.music-placeholder {
+    width: 100%;
+    height: 352px;
+    background: transparent;
+    border: 1px dashed #ddd;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.music-loading-text {
+    color: var(--accent-color);
+    font-size: 0.9rem;
 }
 
 .secondary-btn {

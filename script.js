@@ -92,12 +92,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         modalOverlay.classList.add('active');
+
+        // Calculate scrollbar width to prevent layout shift
+        const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+        if (scrollbarWidth > 0) {
+            document.body.style.paddingRight = `${scrollbarWidth}px`;
+        }
+
         document.body.style.overflow = 'hidden'; // Prevent background scrolling
     }
 
     function closeModal() {
         modalOverlay.classList.remove('active');
         document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
     }
 
     // Event Listeners for Projects
@@ -111,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Event Listeners for Writings
-    const writingItems = document.querySelectorAll('.writing-item');
+    const writingItems = document.querySelectorAll('.writing-item[data-i18n-content]');
     writingItems.forEach(item => {
         item.addEventListener('click', () => {
             // Get keys
@@ -126,17 +134,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Event Listeners for Film Images
+    // Film Gallery - Manual Layout Logic
     const filmImages = document.querySelectorAll('.film-tapestry img');
     const showMoreBtn = document.getElementById('showMoreFilm');
-    const INITIAL_FILM_COUNT = 7;
 
-    // Initially hide images > INITIAL_FILM_COUNT
-    filmImages.forEach((img, index) => {
-        if (index >= INITIAL_FILM_COUNT) {
-            img.classList.add('hidden');
-        }
-
+    // Add click listeners to all images
+    filmImages.forEach(img => {
         img.addEventListener('click', () => {
             const title = img.getAttribute('data-title') || 'Film Photo';
             const description = img.getAttribute('data-description') || '';
@@ -147,13 +150,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Show More Button Logic
     if (showMoreBtn) {
-        // Hide button if no hidden images
-        if (filmImages.length <= INITIAL_FILM_COUNT) {
+        // Check if there are any hidden images
+        const hiddenImages = document.querySelectorAll('.film-tapestry img.hidden');
+
+        if (hiddenImages.length === 0) {
             showMoreBtn.style.display = 'none';
         }
 
         showMoreBtn.addEventListener('click', () => {
-            filmImages.forEach(img => img.classList.remove('hidden'));
+            // Reveal all hidden images
+            document.querySelectorAll('.film-tapestry img.hidden').forEach(img => {
+                img.classList.remove('hidden');
+            });
             showMoreBtn.style.display = 'none';
         });
     }
@@ -249,7 +257,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Initialize with default language
-    setLanguage('es');
+    // Initialize with default language or from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const langParam = urlParams.get('lang');
+    if (langParam && (langParam === 'en' || langParam === 'es')) {
+        setLanguage(langParam);
+    } else {
+        setLanguage('es');
+    }
+
+    // Check for writing query param to open modal directly
+    const writingParam = urlParams.get('writing');
+    if (writingParam) {
+        // Find the item with this title key
+        const targetItem = document.querySelector(`.writing-item[data-i18n-title="${writingParam}"]`);
+        if (targetItem) {
+            // Scroll to writings section
+            const writingsSection = document.getElementById('writings');
+            if (writingsSection) {
+                writingsSection.scrollIntoView({ behavior: 'smooth' });
+            }
+            // Open modal
+            // We need to wait a bit for the language to be set and DOM to be ready? 
+            // setLanguage is synchronous.
+            // Just trigger click
+            setTimeout(() => {
+                targetItem.click();
+            }, 500);
+        }
+    }
 
     // Contact Form Submission Handler
     const contactForm = document.getElementById('contactForm');
@@ -325,6 +361,53 @@ document.addEventListener('DOMContentLoaded', () => {
                 formStatus.className = 'form-status';
                 formStatus.textContent = '';
             }, 5000);
+        }
+    }
+
+    // Lazy Load Spotify Embed
+    const spotifyContainer = document.getElementById('spotify-container');
+
+    function loadSpotifyEmbed() {
+        if (!spotifyContainer || spotifyContainer.querySelector('iframe')) return;
+
+        const src = spotifyContainer.dataset.src;
+        if (src) {
+            const iframe = document.createElement('iframe');
+            iframe.src = src;
+            iframe.style.borderRadius = '12px';
+            iframe.width = '100%';
+            iframe.height = '352';
+            iframe.frameBorder = '0';
+            iframe.allowFullscreen = true;
+            iframe.allow = 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture';
+
+            // Remove placeholder and add iframe
+            const placeholder = document.getElementById('spotify-placeholder');
+            if (placeholder) {
+                placeholder.remove();
+            }
+            spotifyContainer.appendChild(iframe);
+        }
+    }
+
+    if (spotifyContainer) {
+        // Use Intersection Observer if available
+        if ('IntersectionObserver' in window) {
+            const spotifyObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        loadSpotifyEmbed();
+                        spotifyObserver.disconnect();
+                    }
+                });
+            }, {
+                rootMargin: '200px',
+                threshold: 0
+            });
+            spotifyObserver.observe(spotifyContainer);
+        } else {
+            // Fallback: load after a short delay
+            setTimeout(loadSpotifyEmbed, 2000);
         }
     }
 
