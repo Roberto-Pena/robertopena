@@ -305,7 +305,8 @@ section h2 {
 .list li {
     display: flex;
     margin-bottom: 1rem;
-    align-items: baseline;
+    align-items: flex-start;
+    gap: 0;
 }
 
 .writing-item {
@@ -340,10 +341,13 @@ section h2 {
 }
 
 .list .date {
-    width: 80px;
+    min-width: 60px;
+    width: 60px;
+    flex-shrink: 0;
     font-size: 0.85rem;
     color: var(--accent-color);
     font-feature-settings: "tnum";
+    padding-top: 0.1rem;
 }
 
 /* Projects Grid */

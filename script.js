@@ -59,8 +59,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const logo = document.querySelector('.logo');
     window.addEventListener('scroll', () => {
         const scrollY = window.scrollY;
-        // Rotate 0.25 degree per pixel scrolled (faster than 0.1)
-        logo.style.transform = `rotate(${scrollY * 0.25}deg)`;
+        // Use softer rotation on mobile (0.1 deg/px) vs desktop (0.25 deg/px)
+        const rotationMultiplier = window.innerWidth <= 768 ? 0.08 : 0.25;
+        logo.style.transform = `rotate(${scrollY * rotationMultiplier}deg)`;
     });
 
     // Blue Light Cursor
